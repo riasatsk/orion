@@ -39,24 +39,46 @@ export default class Orion {
    */
   start(port: number = 3000) {
     const handlers = this.handlers;
-    if (typeof Bun !== undefined) {
-      try {
-        Bun.serve({
-          port: port,
-          async fetch(req: Request): Promise<Response> {
-            await handleRequest(req, handlers);
-          },
-        });
-      } catch (serverError) {
-        console.error(`Server Error: ${serverError}`);
-      }
-    } else if (typeof Deno !== undefined) {
+
+    if (typeof Bun !== "undefined") {
+      Bun.serve({
+        port: port,
+        async fetch(req: Request): Promise<Response> {
+          return await handleRequest(req, handlers);
+        },
+      });
+    } else if (typeof Deno !== "undefined") {
       Deno.serve(
         { port },
-        (req: Request) => await handleRequest(req, handlers)
+        async (req: Request) => await handleRequest(req, handlers)
       );
-    }
+    } else {
+      // Use a basic Node.js server as a fallback
+      const http = require("http");
 
-    console.log(`Orion server is running on port ${port}`);
+      const server = http.createServer(async (req, res) => {
+        let body = "";
+        req.on("data", (chunk) => {
+          body += chunk.toString();
+        });
+        req.on("end", async () => {
+          try {
+            const response = await handleRequest(
+              new Request(req.url, { method: req.method, body }),
+              handlers
+            );
+            res.writeHead(response.status, response.headers);
+            res.end(await response.text());
+          } catch (error) {
+            console.error(`Server Error: ${error}`);
+            res.writeHead(500);
+            res.end("Internal Server Error");
+          }
+        });
+      });
+      server.listen(port, () => {
+        console.log(`Orion server is running on port ${port}`);
+      });
+    }
   }
 }
