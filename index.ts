@@ -1,4 +1,7 @@
-async function handleRequest(req: Request, handlers) {
+async function handleRequest(
+  req: Request,
+  handlers: { [key: string]: (...args: any[]) => Promise<Response> | Response }
+) {
   try {
     const payload = await req.json();
     const { handler, args } = payload;
@@ -37,7 +40,7 @@ export default class Orion {
    * Starts the Orion server.
    * @param {number} [port=3000] - The port number to start the server on.
    */
-  start(port: number = 3000) {
+  async start(port: number = 3000) {
     const handlers = this.handlers;
 
     if (typeof Bun !== "undefined") {
@@ -53,12 +56,12 @@ export default class Orion {
         async (req: Request) => await handleRequest(req, handlers)
       );
     } else {
-      // Use a basic Node.js server as a fallback
-      const http = require("http");
+      // Dynamically import Node.js's http module
+      const http = await import("http");
 
-      const server = http.createServer(async (req, res) => {
+      const server = http.createServer(async (req: any, res: any) => {
         let body = "";
-        req.on("data", (chunk) => {
+        req.on("data", (chunk: any) => {
           body += chunk.toString();
         });
         req.on("end", async () => {
@@ -76,6 +79,7 @@ export default class Orion {
           }
         });
       });
+
       server.listen(port, () => {
         console.log(`Orion server is running on port ${port}`);
       });
