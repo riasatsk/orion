@@ -1,5 +1,5 @@
 {
   "name": "@orion/orion",
   "version": "0.1.0",
-  "exports": "./index.ts"
+  "exports": "./main.ts"
 }
