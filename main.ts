@@ -1,7 +1,7 @@
 async function handleRequest(
   req: Request,
   handlers: {
-    [key: string]: (...args: string[]) => Promise<Response> | Response;
+    [key: string]: (...args: any[]) => Promise<Response> | Response;
   }
 ) {
   try {
@@ -30,7 +30,7 @@ async function handleRequest(
  */
 export default class Orion {
   handlers: {
-    [key: string]: (...args: string[]) => Promise<Response> | Response;
+    [key: string]: (...args: any[]) => Promise<Response> | Response;
   };
 
   /**
