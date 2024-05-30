@@ -1,10 +1,3 @@
-declare var Bun: {
-  serve: (options: {
-    port: number;
-    fetch: (req: Request) => Promise<Response>;
-  }) => void;
-};
-
 async function handleRequest(
   req: Request,
   handlers: { [key: string]: (...args: any[]) => Promise<Response> | Response }

@@ -15,5 +15,8 @@
     "api"
   ],
   "author": "Riasat Sk",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
 }
