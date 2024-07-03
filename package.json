@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "module": "index.ts",
   "type": "module",
+  "repository": {"type": "git","url": "https://github.com/riasatsk/orion"},
   "devDependencies": {
     "@types/bun": "latest"
   },
